@@ -1,0 +1,20 @@
+{
+  "name": "task1_5lvl",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000t\u0000a\u0000s\u0000k\u00001\u0000-\u0000p\u0000a\u0000r\u0000t\u00005\u0000\r\u0000 \u0000p\u0000r\u0000a\u0000c\u0000t\u0000i\u0000c\u0000e\u0000 \u0000i\u0000n\u0000 \u0000T\u0000y\u0000p\u0000e\u0000S\u0000c\u0000r\u0000i\u0000p\u0000t\u0000",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YevgenShimkov/task1-part5.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YevgenShimkov/task1-part5/issues"
+  },
+  "homepage": "https://github.com/YevgenShimkov/task1-part5#readme"
+}
