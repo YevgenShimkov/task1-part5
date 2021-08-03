@@ -1,35 +1,68 @@
-const gulp = require('gulp');
-const browserSync = require('browser-sync');
-const sass = require('gulp-sass');
-const rename = require("gulp-rename");
-const autoprefixer = require('gulp-autoprefixer');
-const cleanCSS = require('gulp-clean-css');
-
-// Static server
-gulp.task('server', function() {
-    browserSync.init({
-        server: {
-            baseDir: "src"
-        }
-    });
+var gulp = require("gulp");
+var browserify = require("browserify");
+var source = require("vinyl-source-stream");
+var tsify = require("tsify");
+var sourcemaps = require("gulp-sourcemaps");
+var buffer = require("vinyl-buffer");
+var paths = {
+  pages: ["src/*.html"],
+};
+gulp.task("copy-html", function () {
+  return gulp.src(paths.pages).pipe(gulp.dest("dist"));
 });
+gulp.task(
+  "default",
+  gulp.series(gulp.parallel("copy-html"), function () {
+    return browserify({
+      basedir: ".",
+      debug: true,
+      entries: ["src/main.ts"],
+      cache: {},
+      packageCache: {},
+    })
+      .plugin(tsify)
+      .transform("babelify", {
+        presets: ["es2015"],
+        extensions: [".ts"],
+      })
+      .bundle()
+      .pipe(source("bundle.js"))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(sourcemaps.write("./"))
+      .pipe(gulp.dest("dist"));
+  })
+);
+// var gulp = require("gulp");
+// var browserify = require("browserify"); // собирает всё вместе
+// var source = require("vinyl-source-stream"); // преобразует читаемый поток , который вы получаете от browserify , в поток винила , который ожидает получить gulp.
+// var watchify = require("watchify"); // отслеживает изменения
+// var tsify = require("tsify");
+// var gutil = require("gulp-util");
+// var paths = {
+//     pages: ['src/*.html']
+// }
 
-gulp.task('styles', function() {
-    return gulp.src("src/sass/**/*.+(scss|sass)") // /**/ означает- и все папки, что внутри с тамими же файлами
-        .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-        .pipe(rename({
-            prefix: "",
-            suffix: ".min",
-        }))
-        .pipe(autoprefixer())
-        .pipe(cleanCSS({ compatibility: 'ie8' }))
-        .pipe(gulp.dest("src/css"))
-        .pipe(browserSync.stream());
-})
+// var watchedBrowserify = watchify(browserify({
+//   basedir: '.',
+//   debug: true,
+//   entries: ['src/main.ts'],
+//   cache: {},
+//   packageCache: {}
+// }).plugin(tsify));
 
-gulp.task('watch', function() {
-    gulp.watch("src/sass/**/*.+(scss|sass)", gulp.parallel('styles'))
-    gulp.watch("src/*.html").on('change', browserSync.reload)
-})
+// gulp.task("copy-html", function () {
+//   return gulp.src(paths.pages)
+//       .pipe(gulp.dest("dist"));
+// });
 
-gulp.task('default', gulp.parallel('watch', 'server', 'styles'))
+// function bundle() {
+//   return watchedBrowserify
+//       .bundle()
+//       .pipe(source('main.js'))
+//       .pipe(gulp.dest("dist"));
+// }
+
+// gulp.task("default", ["copy-html"], bundle);
+// watchedBrowserify.on("update", bundle);
+// watchedBrowserify.on("log", gutil.log); // выводит в консоль события
